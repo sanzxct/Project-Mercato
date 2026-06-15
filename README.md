@@ -6,6 +6,16 @@
 
 ---
 
+
+### ⚠️ Catatan Penting Terkait Dataset
+Repositori ini tidak menyertakan dataset mentah karena kebijakan pembatasan ukuran file GitHub (maksimal 100 MB per file, sedangkan file `appearances.csv` mencapai 139 MB). 
+
+Untuk menjalankan ulang pipeline Jupyter Notebook ini di komputer Anda, silakan ikuti langkah persiapan data berikut:
+1. Unduh dataset resmi **"Football Data from Transfermarkt"** melalui Kaggle: `https://www.kaggle.com/datasets/davidcariboo/player-scores`
+2. Ekstrak file yang diunduh.
+3. Ambil 3 file utama: `players.csv`, `appearances.csv`, dan `player_valuations.csv`.
+4. Letakkan ketiga file tersebut secara manual ke dalam folder `data/raw/` di repositori lokal ini.
+
 ## 📌 Deskripsi Proyek
 
 Project Mercato adalah sebuah sistem *Machine Learning* berbasis regresi yang dirancang untuk memprediksi nilai pasar (*market value*) pemain sepak bola profesional secara objektif.
@@ -88,3 +98,6 @@ conda activate mercato-env
 **3. Jalankan Jupyter Notebook di VS Code:**
 
 Buka folder ini di Visual Studio Code, navigasikan ke folder `notebooks/`, dan jalankan sel-sel pada `01-EDA-Dasar.ipynb` secara berurutan.
+
+
+
