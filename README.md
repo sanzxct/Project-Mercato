@@ -2,7 +2,7 @@
 
 **Penulis:** Elsandro Rivalito  
 **Institusi:** Universitas Dian Nuswantoro (UDINUS) - Program Studi Teknik Informatika  
-**Konteks:** Proyek Ujian Tengah Semester (UTS) Machine Learning  
+**NIM:**  A11.2024.15895
 
 ---
 
@@ -70,7 +70,7 @@ Project-Mercato/
 **1. Kloning repositori ini:**
 
 ```bash
-git clone https://github.com/[USERNAME_GITHUB_ANDA]/Project-Mercato.git
+git clone https://github.com/sanzxct/Project-Mercato.git
 cd Project-Mercato
 ```
 
