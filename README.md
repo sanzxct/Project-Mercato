@@ -57,9 +57,8 @@ Project-Mercato/
 - [x] **Feature Engineering:** Pembuatan metrik `goals_per_90` dan `assists_per_90`.
 - [x] **Feature Selection:** Analisis Heatmap Pearson Correlation untuk menentukan variabel independen yang relevan.
 - [x] **Data Splitting:** Pemisahan Data Train (80%) dan Data Test (20%) secara bersih tanpa ID/kolom teks.
-- [ ] **Modeling:** Pelatihan algoritma XGBoost Regressor.
-- [ ] **Evaluation:** Pengukuran performa model menggunakan RMSE dan MAE.
-- [ ] **Deployment:** Pembuatan antarmuka pengguna interaktif menggunakan Streamlit.
+- [x] **Modeling:** Pelatihan algoritma XGBoost Regressor.
+- [x] **Evaluation:** Pengukuran performa model menggunakan RMSE dan MAE.
 
 ---
 
