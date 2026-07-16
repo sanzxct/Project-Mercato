@@ -1,34 +1,38 @@
 # Project Mercato: Prediksi Valuasi Harga Pemain Sepak Bola
 
-**Penulis:** Elsandro Rivalito  
-**Institusi:** Universitas Dian Nuswantoro (UDINUS) - Program Studi Teknik Informatika  
-**NIM:**  A11.2024.15895
+**Penulis:** Elsandro Rivalito
+**Institusi:** Universitas Dian Nuswantoro (UDINUS) - Program Studi Teknik Informatika
+**NIM:** A11.2024.15895
 
 ---
 
-
 ### ⚠️ Catatan Penting Terkait Dataset
-Repositori ini tidak menyertakan dataset mentah karena kebijakan pembatasan ukuran file GitHub (maksimal 100 MB per file, sedangkan file `appearances.csv` mencapai 139 MB). 
 
-Untuk menjalankan ulang pipeline Jupyter Notebook ini di komputer Anda, silakan ikuti langkah persiapan data berikut:
+Repositori ini tidak menyertakan dataset mentah karena kebijakan pembatasan ukuran file GitHub (maksimal 100 MB per file, sedangkan file `appearances.csv` mencapai 139 MB).
+
+Untuk menjalankan ulang *pipeline* komputasi proyek ini di komputer Anda, silakan ikuti langkah persiapan data berikut:
+
 1. Unduh dataset resmi **"Football Data from Transfermarkt"** melalui Kaggle: `https://www.kaggle.com/datasets/davidcariboo/player-scores`
 2. Ekstrak file yang diunduh.
 3. Ambil 3 file utama: `players.csv`, `appearances.csv`, dan `player_valuations.csv`.
 4. Letakkan ketiga file tersebut secara manual ke dalam folder `data/raw/` di repositori lokal ini.
 
+---
+
 ## 📌 Deskripsi Proyek
 
-Project Mercato adalah sebuah sistem *Machine Learning* berbasis regresi yang dirancang untuk memprediksi nilai pasar (*market value*) pemain sepak bola profesional secara objektif.
+Project Mercato adalah sebuah sistem *Machine Learning* komprehensif berbasis regresi yang dirancang untuk memprediksi nilai pasar (*market value*) pemain sepak bola profesional secara objektif. Proyek ini dikembangkan sebagai *Capstone Project* Ujian Akhir Semester Mata Kuliah Pembelajaran Mesin.
 
-Proyek ini dibangun untuk mengatasi kelemahan pada penelitian terdahulu yang sering menggunakan pendekatan *brute-force* (memasukkan puluhan atribut mentah tanpa seleksi) yang memicu *noise* dan inefisiensi komputasi. Pendekatan utama dalam proyek ini berfokus pada **Feature Engineering** (penciptaan rasio performa per-90-menit) dan **Feature Selection** berbasis korelasi matematis.
+Menjawab kelemahan pada penelitian terdahulu yang sering menggunakan pendekatan *brute-force* (memasukkan puluhan atribut mentah tanpa seleksi) dan arsitektur *Single-Model*, proyek ini mendemonstrasikan penyelesaian gap arsitektur tersebut melalui **Feature Engineering** (penciptaan rasio performa), seleksi fitur matematis, dan penerapan arsitektur **Stratified Dual-Model XGBoost** untuk meminimalisir *scaling error*.
 
 ---
 
 ## 🚀 Fitur & Inovasi Utama
 
-1. **Modern Data Scoping:** Mengeliminasi data historis pemain pensiun dan membatasi populasi pelatihan hanya pada pemain aktif (musim 2024 ke atas) untuk menangkap tren inflasi bursa transfer modern.
-2. **Objective Feature Engineering:** Mengonversi statistik kumulatif menjadi rasio *per-90-minutes* (`goals_per_90`, `assists_per_90`) untuk menetralkan bias terhadap pemain cadangan.
-3. **Data Reduction (Pearson Correlation):** Menggunakan matriks korelasi untuk membuang fitur "sampah" (seperti ID, tinggi badan, dll.) dan hanya mempertahankan *Golden Features* yang memiliki korelasi matematis kuat terhadap harga pasar.
+1. **Objective Feature Engineering:** Mengonversi statistik kumulatif menjadi rasio *per-90-minutes* (`goals_per_90`, `assists_per_90`) untuk menetralkan bias terhadap pemain cadangan.
+2. **Stratified Dual-Model Architecture:** Membelah populasi model menjadi dua spesialis (Kasta Bawah `<= €1 Juta` dan Kasta Elit `> €1 Juta`) untuk menjaga sensitivitas algoritma terhadap fluktuasi harga kecil sekaligus menangani tren harga megabintang.
+3. **Algorithm Benchmarking:** Mengikutsertakan komparasi kinerja (*benchmarking*) algoritma dengan *Random Forest Regressor* untuk memvalidasi keunggulan performa *Extreme Gradient Boosting* (XGBoost).
+4. **Interactive Deployment (Streamlit):** Model diserialisasi dan di-*deploy* dalam bentuk aplikasi web interaktif yang dilengkapi fitur *Auto-Fill Database* lokal, memungkinkan ekstraksi profil pemain dari basis data secara instan (*Robust UX/UI*).
 
 ---
 
@@ -37,28 +41,33 @@ Proyek ini dibangun untuk mengatasi kelemahan pada penelitian terdahulu yang ser
 ```text
 Project-Mercato/
 │
+├── app/
+│   └── app.py                     # Aplikasi web interaktif Streamlit (Front-End & Inference)
 ├── data/
-│   ├── raw/               # Dataset CSV mentah dari Kaggle (players, appearances, valuations)
-│   └── processed/         # Dataset hasil cleaning & feature engineering (mercato_engineered_data.csv)
-│
+│   ├── raw/                       # Dataset CSV mentah dari Kaggle (players, appearances, valuations)
+│   └── processed/                 # Dataset hasil cleaning & feature engineering
+├── models/
+│   ├── xgb_regressor_sub1m_tier.pkl   # Artifact model spesialis kasta bawah
+│   └── xgb_regressor_elite_tier.pkl   # Artifact model spesialis kasta elit
 ├── notebooks/
-│   └── 01-EDA-Dasar.ipynb # Pipeline Data Preparation, Feature Engineering, & Feature Selection
-│
-├── .gitignore             # Mengabaikan file sistem dan env macOS
-└── README.md              # Dokumentasi proyek
+│   └── 01-EDA-Dasar.ipynb         # Pipeline end-to-end: EDA, Preprocessing, Modeling, Benchmarking
+├── reports/
+│   └── Laporan_UAS_Elsandro.pdf   # Laporan teknis dan evaluasi analisis
+├── requirements.txt               # Dependensi untuk environment Streamlit Cloud
+└── README.md                      # Dokumentasi proyek
 ```
 
 ---
 
-## 📊 Progres Saat Ini
+## 📊 Progres Proyek
 
-- [x] **Setup Environment:** Isolasi dependensi menggunakan Conda (`mercato-env`).
-- [x] **Data Aggregation & Integration:** Menggabungkan tabel profil dengan ratusan ribu baris riwayat pertandingan menjadi satu dataset utuh.
-- [x] **Feature Engineering:** Pembuatan metrik `goals_per_90` dan `assists_per_90`.
-- [x] **Feature Selection:** Analisis Heatmap Pearson Correlation untuk menentukan variabel independen yang relevan.
-- [x] **Data Splitting:** Pemisahan Data Train (80%) dan Data Test (20%) secara bersih tanpa ID/kolom teks.
-- [x] **Modeling:** Pelatihan algoritma XGBoost Regressor.
-- [x] **Evaluation:** Pengukuran performa model menggunakan RMSE dan MAE.
+- [x] **Setup Environment & Data Scoping** — Isolasi dependensi menggunakan Conda dan pembatasan populasi pada pemain aktif modern.
+- [x] **Feature Engineering & Selection** — Pembuatan metrik `per_90_minutes` dan reduksi dimensi menggunakan Pearson Correlation.
+- [x] **Stratified Splitting** — Memecah traffic data menggunakan Gatekeeper rekor harga.
+- [x] **Modeling (XGBoost)** — Pelatihan model ganda terpisah untuk Kasta Bawah dan Kasta Elit.
+- [x] **Model Explainability** — Analisis Feature Importance untuk membongkar prioritas keputusan mesin (Black-Box transparency).
+- [x] **Benchmarking** — Komparasi evaluasi performa (MAE & R2) melawan Random Forest.
+- [x] **Deployment** — Pembuatan antarmuka pengguna berbasis Streamlit dan peluncuran ke Streamlit Community Cloud.
 
 ---
 
@@ -66,11 +75,12 @@ Project-Mercato/
 
 | Kategori | Teknologi |
 |---|---|
-| Bahasa | Python 3.11 |
+| Bahasa Pemrograman | Python 3.11 |
 | Data Manipulation | Pandas, NumPy |
 | Data Visualization | Seaborn, Matplotlib |
-| Machine Learning | Scikit-Learn (Train-Test Split & evaluasi), XGBoost *(segera)* |
-| Environment & Tools | Conda, Jupyter Notebook, Visual Studio Code |
+| Machine Learning | Scikit-Learn, XGBoost, Joblib |
+| Web Deployment | Streamlit, Streamlit Community Cloud |
+| Environment Tools | Conda, Jupyter Notebook, Visual Studio Code |
 
 ---
 
@@ -83,20 +93,20 @@ git clone https://github.com/sanzxct/Project-Mercato.git
 cd Project-Mercato
 ```
 
-**2. Aktifkan environment Conda:**
+**2. Persiapkan environment (Conda disarankan):**
 
 ```bash
+conda create -n mercato-env python=3.11
 conda activate mercato-env
+pip install -r requirements.txt
 ```
 
-> Jika belum membuat environment, instal dependensi terlebih dahulu:
-> ```bash
-> pip install pandas matplotlib seaborn scikit-learn jupyter
-> ```
+**3. Menjalankan Aplikasi Web (Streamlit):**
 
-**3. Jalankan Jupyter Notebook di VS Code:**
+Pastikan Anda berada di direktori root `Project-Mercato`, lalu eksekusi perintah berikut:
 
-Buka folder ini di Visual Studio Code, navigasikan ke folder `notebooks/`, dan jalankan sel-sel pada `01-EDA-Dasar.ipynb` secara berurutan.
+```bash
+streamlit run app/app.py
+```
 
-
-
+Aplikasi secara otomatis akan terbuka di browser Anda melalui `http://localhost:8501`
