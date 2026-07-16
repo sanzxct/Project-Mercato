@@ -30,13 +30,18 @@ def load_dataset():
 try:
     model_bawah, model_elit = load_models()
     df_players = load_dataset()
-    st.sidebar.success("Engine & Database Ready!")
+    
+    # Deteksi apakah database berhasil dimuat
+    if df_players is not None:
+        st.sidebar.success("Engine & Database Ready!")
+    else:
+        st.sidebar.warning("⚠️ Database CSV tidak ditemukan. Mode Manual diaktifkan.")
+        
 except Exception as e:
     st.sidebar.error(f"Gagal memuat sistem: {e}")
 
 # --- LOGIKA AUTO-FILL (PENCARIAN NAMA) ---
 st.sidebar.header("Pencarian Pemain Cepat")
-st.sidebar.markdown("*Ketik nama pemain untuk mengisi statistik otomatis.*")
 
 nama_kolom = None
 if df_players is not None:
@@ -45,14 +50,16 @@ if df_players is not None:
     elif 'player_name' in df_players.columns:
         nama_kolom = 'player_name'
 
-# Variabel Default
+# Variabel Default (Wajib didefinisikan di awal agar tidak NameError)
 def_age, def_mins, def_t_goals, def_t_ast = 25, 1500, 5, 2
 def_g90, def_a90 = 0.5, 0.2
 def_icaps, def_igoals = 0, 0
 def_hmv = 500000
 def_pos_index = 0 # Default: Attack
+selected_name = "-- Input Manual --" # <--- INI SOLUSI ERROR-NYA
 
 if nama_kolom:
+    st.sidebar.markdown("*Ketik nama pemain untuk mengisi statistik otomatis.*")
     daftar_nama = ["-- Input Manual --"] + sorted(df_players[nama_kolom].astype(str).tolist())
     selected_name = st.sidebar.selectbox("Cari Pemain (Database):", daftar_nama)
     
@@ -69,11 +76,7 @@ if nama_kolom:
         def_igoals = int(p_data.get('international_goals', def_igoals))
         def_hmv = int(p_data.get('highest_market_value_in_eur', def_hmv))
         
-        # --- LOGIKA POSISI SUPER ROBUST ---
-        # 1. Cek apakah ada kolom 'position' murni (sebelum One-Hot Encoding)
         pos_raw = str(p_data.get('position', '')).strip().lower()
-        
-        # 2. Cek juga variasi isi nilai One-Hot (bisa '1', '1.0', True, dsb)
         if pos_raw == 'midfield' or str(p_data.get('position_Midfield', 0)) in ['1', '1.0', 'True']:
             def_pos_index = 1
         elif pos_raw == 'defender' or str(p_data.get('position_Defender', 0)) in ['1', '1.0', 'True']:
@@ -81,14 +84,13 @@ if nama_kolom:
         elif pos_raw == 'goalkeeper' or str(p_data.get('position_Goalkeeper', 0)) in ['1', '1.0', 'True']:
             def_pos_index = 3
         else:
-            def_pos_index = 0 # Attack
+            def_pos_index = 0 
 
 # --- SIDEBAR: USER INPUT UI ---
 st.sidebar.header("Parameter Statistik")
 
 st.sidebar.markdown("**Profil & Posisi**")
 age = st.sidebar.slider("Usia (Tahun)", 16, 45, value=def_age)
-# Dropdown posisi akan dikunci ke def_pos_index terbaru
 position = st.sidebar.selectbox("Posisi Pemain", ["Attack", "Midfield", "Defender", "Goalkeeper"], index=def_pos_index)
 
 st.sidebar.markdown("**Statistik Domestik**")
@@ -140,7 +142,9 @@ if predict_button:
     
     input_data = pd.DataFrame([input_dict], columns=expected_columns)
     
-    st.subheader(f"Hasil Analisis Sistem {'(Profil: ' + selected_name + ')' if selected_name != '-- Input Manual --' else ''}")
+
+    judul_hasil = f"Hasil Analisis Sistem (Profil: {selected_name})" if selected_name != "-- Input Manual --" else "Hasil Analisis Sistem"
+    st.subheader(judul_hasil)
     
     with st.spinner('Menganalisis data komputasi...'):
         if highest_market_value <= 1000000:
